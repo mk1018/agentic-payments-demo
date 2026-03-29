@@ -1,6 +1,7 @@
 [build]
 builder = "NIXPACKS"
 buildCommand = "pnpm install && pnpm --filter shared build && pnpm --filter agents build"
+watchPatterns = ["apps/agents/**", "packages/shared/**"]
 
 [deploy]
 startCommand = "node apps/agents/dist/index.js"

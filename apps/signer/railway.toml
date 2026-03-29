@@ -1,6 +1,7 @@
 [build]
 builder = "NIXPACKS"
 buildCommand = "pnpm install && pnpm --filter signer build"
+watchPatterns = ["apps/signer/**"]
 
 [deploy]
 startCommand = "node apps/signer/dist/index.js"
