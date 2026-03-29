@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { createBuyer } from "./buyer.js";
+import { createStripe402Buyer } from "./buyer-stripe402.js";
 import type { LogEvent } from "shared";
 
 function requireEnv(key: string): string {
@@ -57,21 +58,55 @@ app.post("/log", (req, res) => {
   res.sendStatus(204);
 });
 
+// --- Payment selection (for MPP) ---
+let paymentSelectionResolve: ((type: "card" | "crypto") => void) | null = null;
+
+app.post("/select-payment", (req, res) => {
+  const { paymentType } = req.body as { paymentType: "card" | "crypto" };
+  if (paymentSelectionResolve) {
+    paymentSelectionResolve(paymentType);
+    paymentSelectionResolve = null;
+    res.json({ status: "selected", paymentType });
+  } else {
+    res.status(400).json({ error: "No pending payment selection" });
+  }
+});
+
+function waitForPaymentSelection(): Promise<"card" | "crypto"> {
+  return new Promise((resolve) => {
+    paymentSelectionResolve = resolve;
+  });
+}
+
 // --- Orchestrator: trigger buyer flow ---
 let buyerRunning = false;
 
-app.post("/start", async (_req, res) => {
+app.post("/start", async (req, res) => {
   if (buyerRunning) {
     res.status(409).json({ error: "Buyer agent is already running" });
     return;
   }
 
+  const mode = (req.body?.mode as string) || "x402";
+
   buyerRunning = true;
-  res.json({ status: "started" });
+  res.json({ status: "started", mode });
 
   try {
-    const buyer = await createBuyer(SIGNER_URL, SIGNER_API_KEY, SELLER_URL, broadcast);
-    await buyer.run();
+    if (mode === "x402") {
+      const buyer = await createBuyer(SIGNER_URL, SIGNER_API_KEY, SELLER_URL + "/x402", broadcast);
+      await buyer.run();
+    } else if (mode === "stripe402") {
+      const buyer = await createStripe402Buyer(
+        SELLER_URL + "/stripe402",
+        waitForPaymentSelection,
+        broadcast,
+      );
+      await buyer.run();
+    } else {
+      throw new Error(`Unknown mode: ${mode}`);
+    }
+
     broadcast({
       id: `log-${Date.now()}`,
       timestamp: Date.now(),
@@ -80,14 +115,15 @@ app.post("/start", async (_req, res) => {
       url: "",
       message: "Buyerエージェントのフローが正常に完了しました",
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
     broadcast({
       id: `log-${Date.now()}`,
       timestamp: Date.now(),
       type: "error",
       method: "SYSTEM",
       url: "",
-      message: `Buyerエージェントエラー: ${err.message}`,
+      message: `Buyerエージェントエラー: ${message}`,
     });
   } finally {
     buyerRunning = false;
@@ -102,6 +138,5 @@ app.listen(PORT, () => {
   console.log(`Buyer agent running on http://localhost:${PORT}`);
   console.log(`  Signer API: ${SIGNER_URL}`);
   console.log(`  Seller API: ${SELLER_URL}`);
-  console.log(`  SSE events: http://localhost:${PORT}/events`);
-  console.log(`  Start buyer: POST http://localhost:${PORT}/start`);
+  console.log(`  Modes: x402, stripe402`);
 });
