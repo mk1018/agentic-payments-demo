@@ -118,8 +118,8 @@ function toSteps(log: LogEvent): Step[] {
         from: "buyer",
         to: "seller",
         label: isSigned
-          ? `${log.method} ${log.url.replace(/.*\/api/, "/api")}（EIP-3009署名済み）`
-          : `${log.method} ${log.url.replace(/.*\/api/, "/api")}`,
+          ? `${log.method} ${log.url.replace(/^https?:\/\/[^/]+/, "")}（EIP-3009署名済み）`
+          : `${log.method} ${log.url.replace(/^https?:\/\/[^/]+/, "")}`,
         color: isSigned ? "purple" : "blue",
         data: log.requestBody,
       },
@@ -263,7 +263,7 @@ function StepRow({ step, index }: { step: Step; index: number }) {
   if (step.isSystem) {
     const x = LANE_X[step.from];
     return (
-      <div className="relative animate-fadeIn" style={{ animationDelay: `${index * 100}ms` }}>
+      <div className="relative animate-fadeIn" style={{ animationDelay: "0ms" }}>
         <div className="absolute inset-0 pointer-events-none">
           <Lifelines />
         </div>
@@ -286,7 +286,7 @@ function StepRow({ step, index }: { step: Step; index: number }) {
   const widthPct = Math.abs(toX - fromX);
 
   return (
-    <div className="relative animate-fadeIn" style={{ animationDelay: `${index * 100}ms` }}>
+    <div className="relative animate-fadeIn" style={{ animationDelay: "0ms" }}>
       <div className="absolute inset-0 pointer-events-none">
         <Lifelines />
       </div>
@@ -386,7 +386,10 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+    const timer = setTimeout(() => {
+      scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 400);
+    return () => clearTimeout(timer);
   }, [logs]);
 
   const steps = logs.flatMap(toSteps);
