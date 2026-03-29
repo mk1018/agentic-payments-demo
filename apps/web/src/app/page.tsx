@@ -426,7 +426,7 @@ export default function Home() {
           <div className="text-right">
             <div className="text-[10px] text-gray-500">合計支払額</div>
             <div className="text-base font-mono font-bold text-green-400">
-              ${totalSpent.toFixed(2)}
+              ${totalSpent.toFixed(4)}
             </div>
           </div>
         </div>
