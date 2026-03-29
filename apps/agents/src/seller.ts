@@ -102,7 +102,7 @@ export function createSellerRouter(
         "GET /products/*": {
           accepts: {
             scheme: "exact",
-            price: "$0.01",
+            price: "$0.0001",
             network: "eip155:84532",
             payTo: sellerAddress,
           },
@@ -111,7 +111,7 @@ export function createSellerRouter(
         "POST /purchase": {
           accepts: {
             scheme: "exact",
-            price: "$0.10",
+            price: "$0.001",
             network: "eip155:84532",
             payTo: sellerAddress,
           },
