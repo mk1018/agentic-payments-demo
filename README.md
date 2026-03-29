@@ -69,13 +69,13 @@ pnpm dev
 
 ### 5. デモ実行
 
-1. ブラウザで http://localhost:3000 を開く
+1. ブラウザで [http://localhost:3000](http://localhost:3000) を開く
 2. 「デモを開始」ボタンをクリック
 3. エージェント間の通信・決済がリアルタイムに表示される
 
 ## アーキテクチャ
 
-```
+```text
 [Web UI (Next.js :3000)]
     ↕ SSE
 [Buyer Agent (Express :4001)]
@@ -94,7 +94,7 @@ pnpm dev
 
 ## ディレクトリ構成
 
-```
+```text
 ├── apps/
 │   ├── web/          # Next.js UI
 │   ├── agents/       # Buyer Agent + Orchestrator
@@ -116,7 +116,7 @@ pnpm dev
 1つのプロジェクト内に4つのサービスを作成:
 
 | サービス名 | Root Directory | Start Command |
-|-----------|---------------|---------------|
+| ---------- | ------------- | ------------- |
 | web | `/` | `pnpm --filter web start` |
 | agents | `/` | `node apps/agents/dist/index.js` |
 | seller | `/` | `node apps/seller/dist/index.js` |
@@ -129,19 +129,23 @@ pnpm dev
 Railway の各サービスに環境変数を設定。サービス間の参照は Railway の内部URL（`${{service.url}}`）を使用:
 
 **agents:**
+
 - `SIGNER_URL` = `${{signer.url}}`
 - `SELLER_URL` = `${{seller.url}}`
 
 **seller:**
+
 - `SELLER_ADDRESS` = `0x...`
 - `BUYER_URL` = `${{agents.url}}`
 
 **signer:**
+
 - `SIGNER_PORT` = `${{PORT}}`
 - `SIGNER_API_KEY` = （ランダム生成）
 - `OWS_WALLET_NAME` = `agent-buyer`
 
 **web:**
+
 - `NEXT_PUBLIC_API_URL` = `${{agents.url}}`
 
 ### 4. デプロイ
@@ -151,4 +155,4 @@ GitHubにプッシュすると自動デプロイされます。
 ## テストネット
 
 - ネットワーク: Base Sepolia (Chain ID: 84532)
-- Explorer: https://sepolia.basescan.org
+- Explorer: [https://sepolia.basescan.org](https://sepolia.basescan.org)
