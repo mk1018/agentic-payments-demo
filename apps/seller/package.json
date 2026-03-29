@@ -10,13 +10,15 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@stripe402/core": "^0.0.1",
     "@x402/core": "^2.8.0",
     "@x402/evm": "^2.8.0",
     "@x402/express": "^2.8.0",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
-    "shared": "workspace:*"
+    "shared": "workspace:*",
+    "stripe": "^21.0.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
