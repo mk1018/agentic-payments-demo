@@ -62,13 +62,13 @@ Signer (port 4002) → Agents (port 4001) → Web UI (port 3000) が起動しま
 
 ### 5. デモ実行
 
-1. ブラウザで http://localhost:3000 を開く
+1. ブラウザで [http://localhost:3000](http://localhost:3000) を開く
 2. 「Start Buyer Agent」ボタンをクリック
 3. エージェント間の通信・決済がリアルタイムに表示される
 
 ## アーキテクチャ
 
-```
+```text
 [Web UI (Next.js)]
     ↕ SSE
 [Orchestrator Server (Express)]
@@ -84,7 +84,7 @@ Signer (port 4002) → Agents (port 4001) → Web UI (port 3000) が起動しま
 
 ## ディレクトリ構成
 
-```
+```text
 ├── apps/
 │   ├── web/          # Next.js UI
 │   ├── agents/       # Express (Buyer + Seller + Orchestrator)
@@ -97,4 +97,4 @@ Signer (port 4002) → Agents (port 4001) → Web UI (port 3000) が起動しま
 ## テストネット
 
 - ネットワーク: Base Sepolia (Chain ID: 84532)
-- Explorer: https://sepolia.basescan.org
+- Explorer: [https://sepolia.basescan.org](https://sepolia.basescan.org)

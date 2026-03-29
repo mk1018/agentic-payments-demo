@@ -11,4 +11,6 @@ build/
 *.log
 *.tsbuildinfo
 
+.memo
+
 .vscode/
