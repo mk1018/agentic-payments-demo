@@ -306,7 +306,7 @@ function StepRow({ step, index }: { step: Step; index: number }) {
                   {step.detail}
                 </div>
               )}
-              {(step.txHash || step.data) && (
+              {(step.txHash ?? step.data) !== undefined && (
                 <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                   {step.txHash && (
                     <a
@@ -318,7 +318,7 @@ function StepRow({ step, index }: { step: Step; index: number }) {
                       Basescan ↗
                     </a>
                   )}
-                  {step.data && <DataToggle data={step.data} />}
+                  {step.data != null && <DataToggle data={step.data} />}
                 </div>
               )}
             </div>
@@ -375,8 +375,8 @@ export default function Home() {
       const ev = d as LogEvent;
       setLogs((p) => [...p, ev]);
       if (ev.type === "response_200" && ev.txHash) {
-        if (ev.url.includes("/products/")) setTotalSpent((p) => p + 0.01);
-        else if (ev.url.includes("/purchase")) setTotalSpent((p) => p + 0.1);
+        if (ev.url.includes("/products/")) setTotalSpent((p) => p + 0.0001);
+        else if (ev.url.includes("/purchase")) setTotalSpent((p) => p + 0.001);
       }
       if (ev.type === "error" || (ev.method === "SYSTEM" && ev.type === "response_200"))
         setIsRunning(false);
